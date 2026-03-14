@@ -130,6 +130,70 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTrack();
     }, 3000);
 
+    // Achievements Carousel Auto-scroll
+    const achievementsCarousel = document.getElementById('achievementsCarousel');
+    const achievementsTrack = achievementsCarousel.querySelector('.carousel-track');
+    const achievementsCards = Array.from(achievementsTrack.children);
+    const achievementsPrevButton = achievementsCarousel.querySelector('.prev-button');
+    const achievementsNextButton = achievementsCarousel.querySelector('.next-button');
+    const achievementsIndicatorsContainer = achievementsCarousel.querySelector('.carousel-indicators');
+
+    let achievementsCardWidth = achievementsCards[0].offsetWidth;
+    let achievementsCurrentIndex = 0;
+
+    function updateAchievementsTrack() {
+        achievementsTrack.style.transform = `translateX(-${achievementsCurrentIndex * achievementsCardWidth}px)`;
+        updateAchievementsIndicators();
+    }
+
+    function updateAchievementsIndicators() {
+        const indicators = Array.from(achievementsIndicatorsContainer.children);
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === achievementsCurrentIndex);
+        });
+    }
+
+    achievementsCards.forEach((_, index) => {
+        const indicator = document.createElement('button');
+        indicator.classList.add('carousel-indicator');
+        indicator.addEventListener('click', () => {
+            achievementsCurrentIndex = index;
+            updateAchievementsTrack();
+        });
+        achievementsIndicatorsContainer.appendChild(indicator);
+    });
+
+    updateAchievementsIndicators();
+
+    achievementsNextButton.addEventListener('click', () => {
+        if (achievementsCurrentIndex < achievementsCards.length - 1) {
+            achievementsCurrentIndex++;
+            updateAchievementsTrack();
+        }
+    });
+
+    achievementsPrevButton.addEventListener('click', () => {
+        if (achievementsCurrentIndex > 0) {
+            achievementsCurrentIndex--;
+            updateAchievementsTrack();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        achievementsCardWidth = achievementsCards[0].offsetWidth;
+        updateAchievementsTrack();
+    });
+
+    // Auto-scroll for Achievements Carousel
+    setInterval(() => {
+        if (achievementsCurrentIndex < achievementsCards.length - 1) {
+            achievementsCurrentIndex++;
+        } else {
+            achievementsCurrentIndex = 0;
+        }
+        updateAchievementsTrack();
+    }, 3000); // Same interval as certifications
+
     // Lucide Icons
     lucide.createIcons();
 });
